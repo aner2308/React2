@@ -1,9 +1,22 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using React2.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+
+    //Konverterar siffrorna för min status
+    // 0 = NotStarted
+    // 1 = InProgress
+    // 2 = Completed
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter()
+        );
+    });
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<TodoDbContext>(options =>
