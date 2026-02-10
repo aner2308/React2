@@ -23,8 +23,20 @@ builder.Services.AddDbContext<TodoDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultDbString"))
 );
 
+//Lägger till CORS stöd
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
+
 var app = builder.Build();
 
+//Aktiverr CORS
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
@@ -34,10 +46,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
-//Ser till att APIet lyssnar på rätt port för uppladdning på Render
-var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-app.Urls.Add($"http://0.0.0.0:{port}");
-
 
 app.Run();
